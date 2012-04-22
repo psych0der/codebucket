@@ -3,6 +3,9 @@ version control system
 
 c/c++ programs will used wrapped in shel commands to provide robusteness
 
-
+download and extract the folder to your home directory
+in the terminal type : cd $HOME/codebucket
+		       ./configure
+type in your administrator password when asked
 
 //psych0der
