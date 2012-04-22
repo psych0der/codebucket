@@ -1,0 +1,3 @@
+sudo cp $HOME/codebucket/gethash /bin/gethash
+sudo chmod a+x /bin/gethash
+
