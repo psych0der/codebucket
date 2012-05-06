@@ -2,11 +2,13 @@
 #include <unistd.h>
 #include "./checks/checksum.h"
 #include "./sha1/sha1.h"
+#include "./dir/cdbdir.h"
 
 int main(int argc , char *argv[])
 {
 	FILE *fp;
 	int len;
+	int flag;
 	unsigned int chks; // stores the checksum
 	char buffer[8192] , placeholder[40]; // buffer for storing contents of file
 	
@@ -14,16 +16,33 @@ int main(int argc , char *argv[])
 		
 	if(argc ==1)
 	{
-		printf("\n insufficient arguments supplied\n");
+		printf("ERROR: insufficient arguments supplied .. refer to the manual\n");
 		exit(1);
 	}
 	
-	if( !strcmp(argv[1],"checksum")) 
+
+	if(!strcmp(argv[1],"ini"))
+	{
+		
+		if(initcodebuk()==-1)    // calls function to create directoy structure
+		{
+			printf(" ERROR: unable to initialize codebucket !\n");
+		} 
+	}
+
+
+	else if( !strcmp(argv[1],"checksum")) 
 		{
 			if(!(fp=fopen(argv[2],"r")))
 			{
 				printf("\n %s : no such file or directory found\n",argv[2]);
 			}
+			else if(argc==2)
+			{
+				printf("\n ERROR: No file name specified\n");
+				exit(1);
+			}
+			
 			else
 			{
 				len = fread(buffer,sizeof(char),sizeof(buffer),fp);
@@ -36,10 +55,17 @@ int main(int argc , char *argv[])
 			
 		}
 		
-	else	if( !strcmp(argv[1],"hash")) 
+	else if( !strcmp(argv[1],"hash")) 
+		
 		{
-			
-			    SHA1Context sha;
+			if(argc ==2)
+			{
+				
+				printf("\n ERROR : no string supplied \n");
+				exit(1);
+			}
+			    
+			SHA1Context sha;
 			    int i;
 			        char sha1hash[70];
 			        int num =2;

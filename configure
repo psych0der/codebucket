@@ -1,4 +1,4 @@
 cd $HOME/codebucket
-g++ -o codebuk codebuk.c ./sha1/sha1.c ./checks/checksum.c
+g++ -o codebuk codebuk.c ./sha1/sha1.c ./checks/checksum.c ./dir/cdbdir.c
 sudo cp codebuk /usr/bin/codebuk
 sudo chmod a+x /usr/bin/codebuk

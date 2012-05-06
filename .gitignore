@@ -2,3 +2,6 @@
 .DS_Store
 
 sha1/shatest
+localconfig
+makefile
+.cdb
