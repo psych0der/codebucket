@@ -27,7 +27,8 @@ int main(int argc , char *argv[])
 		if(initcodebuk()==-1)    // calls function to create directoy structure
 		{
 			printf(" ERROR: unable to initialize codebucket !\n");
-		} 
+		}
+		
 	}
 
 

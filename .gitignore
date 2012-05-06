@@ -1,7 +1,11 @@
 
 .DS_Store
-
 sha1/shatest
 localconfig
 makefile
 .cdb
+hash
+getchecksum
+gethash
+.cdbblacklist
+codebuk
