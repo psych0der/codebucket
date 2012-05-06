@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <iostream> // for cin function (fgets) not working #strange#
 #include <sys/stat.h>
 #include <sys/param.h>     // for MAXPATHLEN MACRO
 #include <unistd.h>
 #include <ctype.h>
 #include "cdbdir.h"
+
+
 
 int destroycdb(void)
 {
@@ -47,7 +50,7 @@ int destroycdb(void)
 
 int getconfig(void)
 {
-	char name[30],email[30];
+	char name[30],email[30],desc[200];
 	FILE *fp;
 	
 	printf("Please provide details for creating configuration file\n");
@@ -71,6 +74,29 @@ int getconfig(void)
 	else
 	{
 		printf("\n Error: unable to write to configuration files\n");
+		exit(1);
+	}
+	
+	printf("Please provide description of the project: - \n");
+	//scanf("%s",desc);
+	fflush(stdin);
+	scanf("%s",desc);
+	printf("\n desc : %s\n",desc);
+	
+	if((fp = fopen("./.cdb/descr","w"))!=NULL)
+	{
+		
+		
+		fprintf(fp,"[project-description]\n");
+		fprintf(fp,"%s",desc);
+		fclose(fp);
+		printf("project description successfully written\n");
+		
+		
+	}
+	else
+	{
+		printf("\n Error: unable to write project description\n");
 		exit(1);
 	}
 	
