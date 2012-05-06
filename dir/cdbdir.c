@@ -60,7 +60,7 @@ int getconfig(void)
 	{
 		
 		
-		fprintf(fp,"\n[default-user]\n");
+		fprintf(fp,"[default-user]\n");
 		fprintf(fp,"\tName : %s\n",name);
 		fprintf(fp,"\tEmail : %s\n",email);
 		fclose(fp);
