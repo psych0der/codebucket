@@ -16,6 +16,14 @@ struct equiclass
 	
 };
 
+struct k
+{
+	int a;
+	int b;
+	struct k *ref;
+	
+}
+
 void diff(char *,char*); // gets hash of individual lines of a file specifies by char *
 void insert(int,unsigned long,struct hash_vec **,struct hash_vec **);
 void printll(struct hash_vec *);
