@@ -40,9 +40,9 @@ int adjustll(struct hash_vec *head)
 	
 	struct hash_vec *p;
 	p = head;
-	while((p->next->next)!=NULL)
+	while((p->next)!=NULL)
 	{
-		size++;
+		++size;
 		p = p->next;
 	}
 	p->next=NULL;
@@ -192,8 +192,8 @@ void getarray(struct hash_vec *head , struct hash_vec *arr)
 void printarray(struct hash_vec *arr,int size)
 {
 	
-	int i=0;
-	for(i;i<size;i++)
+	int i=1;
+	for(i;i<=size;i++)
 	{
 		printf("\n lno = %d   hash = %lu",arr[i].lno,arr[i].hash);
 	}
@@ -206,7 +206,7 @@ void fillp(int *p , struct equiclass *ehead , struct hash_vec *file1,struct hash
 	
 	int beg,mid,end,i,loc;
 	
-	for(i=1;i<=size;i++)
+	for(i=1;i<=size+1;i++)
 	{
 		beg=1;
 		end = last;
@@ -247,7 +247,7 @@ void fillp(int *p , struct equiclass *ehead , struct hash_vec *file1,struct hash
 	
 	
 
-	for(i=1;i<size;i++)
+	for(i=1;i<=size;i++)
 	{
 		printf(" %d\n",p[i]);
 	}
@@ -345,7 +345,7 @@ getarray(head2,file2);
 //	printarray(file2,sz2);
 
 int p[sz1];
-fillp(p,ehead,file1,file2,sz2,sz1+1);	// because array starts from 1
+fillp(p,ehead,file1,file2,sz2,sz1);	// because array starts from 1
 
 }
 
