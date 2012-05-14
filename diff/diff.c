@@ -397,7 +397,7 @@ printf("\n Filesize1 : %d    Filesize2 : %d  \n",sz1,sz2);
 	
 	sort(head2);
 	//printll(head2);
-	ehead = malloc(sz2*sizeof(struct equiclass));
+	ehead = (struct equiclass *)malloc(sz2*sizeof(struct equiclass));
 	ecount=gete(head2,ehead);
 	//printel(ehead,ecount);
 

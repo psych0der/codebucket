@@ -279,7 +279,7 @@ int untrack(char *name)
 		
 			if(strcmp(name,f.name))					// for non matching names
 			{
-	          
+			//	printf("\n name : %s\n",name);
 				fwrite(&f,sizeof(struct trackst),1,fp2);
 	
 			}
@@ -290,6 +290,7 @@ int untrack(char *name)
 		remove("./.cdb/cdb.track");
 		rename("./.cdb/temp.track","./.cdb/cdb.track");
 		
+		printf("%s successfully untracked\n",name);
 		return 1;
 	
 	

@@ -9,13 +9,17 @@
 #include "./checks/checksum.h"
 #include "./sha1/sha1.h"
 #include "./dir/cdbdir.h"
+#include "./commit/commit.h"
 #include "./track/cdbtrack.h"
+#include "./diff/diff.h"
 
 #define FALSE 0
 #define TRUE !FALSE
 
 extern  int alphasort();  // for sorting filnames in ascending order
 int match(struct direct ** , char *,int);
+char * substr(char *, int, int ) ;
+
 char pathname[MAXPATHLEN];
 
 int main(int argc , char *argv[])
@@ -93,7 +97,7 @@ int main(int argc , char *argv[])
 			        int num =2;
 			        char ulstring[70];
 			        sha1hash[0]='\0';
-			        char command[100];
+			        char command[100];  
 
 
 			    SHA1Reset(&sha);
@@ -116,7 +120,11 @@ int main(int argc , char *argv[])
 			    }
 
 						        printf("\n");
-						        printf("\t%s\n",sha1hash);
+						        printf("\t%s\n",sha1hash); 
+						
+						
+								
+				
 						
 		}
 		
@@ -127,6 +135,16 @@ else if(!strcmp(argv[1],"status"))
 			flag = filecheck();
 			struct trackst *tp;
 			int num,i=0;
+			if(!flag)
+			{	
+
+				if(createtrack()==1)
+				{
+					printf("\n TRACKING INITIATED\n");
+
+				}
+
+			}
 		
 			
 	/*************************** CLEANING *******************************/
@@ -161,16 +179,7 @@ else if(!strcmp(argv[1],"status"))
 	
 	
 			
-	if(!flag)
-	{	
-		
-		if(createtrack()==1)
-		{
-			printf("\n TRACKING INITIATED\n");
-		
-		}
-		
-	}
+	
 	if(argc==3)
 	{
 		if(!strcmp(argv[2],"show"))
@@ -399,10 +408,6 @@ else if(!strcmp(argv[1],"status"))
 						
 		
 			
-							
-						
-						
-			
 			
 			else
 			{
@@ -461,6 +466,294 @@ else if(!strcmp(argv[1],"status"))
 		 
 		
 	    }	
+	
+		
+		else if(!strcmp(argv[1],"untrack"))
+		{
+			
+			untrack(argv[2]);
+			
+			
+			
+			
+		}
+		
+		else if( !strcmp(argv[1],"commit"))
+		{
+			//printf("\n lol\n");
+			if(argc<3)
+			{
+				printf("\nPlease provide commit message with commit command\n");
+				exit(1);
+			}
+		
+			unsigned long checks,sum=0;
+						SHA1Context sha;
+				    	int i,u,j;
+				        char sha1hash[70];
+				        int num =2;
+				        char ulstring[70];
+				        sha1hash[0]='\0';
+				        char command[100]; 
+						//int num;
+						FILE *fp,*fp1,*fp2;
+						char folder[3],file[39],compath[40],flpath[50],treepath[50],treehash[50];
+						char parhash[50];
+						
+						num = readcontents();
+						char flnames[num][20]; 
+						char objhash[num][50];
+						getnames(flnames);
+					
+						for(u=0;u<num;u++)
+						{
+							
+							strcpy(placeholder,"");
+							printf(" filename : %s\n",flnames[u]);
+							if((fp=fopen(flnames[u],"r"))!=NULL)
+							{
+								/*  checksum */
+								len = fread(buffer,sizeof(char),sizeof(buffer),fp);
+								//fclose(fp);
+							
+								chks = checksum(buffer,len,0);
+								sum+=(unsigned long)chks;
+								sprintf(placeholder,"%u",chks);
+								printf("checksum : %s\n",placeholder);
+									
+								/* hash */
+								SHA1Reset(&sha);
+							    SHA1Input(&sha, (const unsigned char *) placeholder, strlen(placeholder));
+								
+							    if (!SHA1Result(&sha))
+							    {
+							        fprintf(stderr, "ERROR-- could not compute message digest\n");
+							    }
+							    else
+							    {
+							        
+									//printf("\t");
+							        for(i = 0; i < 5 ; i++)
+							        {
+										sprintf(ulstring,"%X", sha.Message_Digest[i]);
+										                        strcat(sha1hash,ulstring);
+
+										printf(" u  %d\n",u);
+									}
+								
+
+								}
+							
+									
+								strcpy(objhash[u],sha1hash);
+								printf("hash %s\n",sha1hash);
+								strcpy(folder,substr(sha1hash,1,2));
+								strcpy(file,substr(sha1hash,3,38));
+								strcpy(compath,"./.cdb/objs/");
+								strcat(compath,folder);
+							    printf("\n line #546\n");
+								if(!opendir(compath))     
+								{
+									//printf("\n compath\n");
+									sprintf(command,"mkdir ./.cdb/objs/%s",folder);
+									system(command);
+							
+								}
+								strcat(compath,"/");
+								strcat(compath,file);
+								if((fp1 = fopen(compath,"wb"))!=NULL)
+								{
+									fwrite(buffer,sizeof(char),sizeof(buffer),fp1);
+									printf("\n writing\n");
+									
+								}
+								else
+								{
+									printf("Error:unable to create blob\n");
+								}
+								fclose(fp1);
+								//fclose(fp);
+							
+									
+									
+					 		}
+							else
+							{
+								printf("****Error: unable to open file %s\n",flnames[u]);
+							}
+						printf("\n hehehe\n");	
+						//fclose(fp2);
+							
+						}
+						
+				
+			
+				
+				
+				/*********    THIS PART IS FOR WRITING TREE OBJECT      ******************/
+				
+				sprintf(placeholder,"%ld",sum);
+				SHA1Reset(&sha);
+			    SHA1Input(&sha, (const unsigned char *) placeholder, strlen(placeholder));
+
+			    if (!SHA1Result(&sha))
+			    {
+			        fprintf(stderr, "ERROR-- could not compute message digest\n");
+			    }
+			    else
+			    {
+			        printf("\t");
+			        for(i = 0; i < 5 ; i++)
+			        {
+						sprintf(ulstring,"%X", sha.Message_Digest[i]);
+						                        strcat(sha1hash,ulstring);
+
+					}
+
+			    }
+				strcpy(treehash,sha1hash);
+				strcpy(folder,substr(sha1hash,1,2));
+				strcpy(file,substr(sha1hash,3,38));
+				strcpy(compath,"./.cdb/objs/");
+				strcat(compath,folder);
+				if(!(opendir(files[i-1]->d_name)))     
+				{
+					sprintf(command,"mkdir ./.cdb/objs/%s",folder);
+					system(command);
+			
+				}
+				strcat(compath,"/");
+				strcat(compath,file);
+				if((fp1 = fopen(compath,"wb"))!=NULL)
+				{
+					int h=0;
+					struct treeblob tb;
+					fwrite(&num,sizeof(int),1, fp);
+					for(h=0;h<num;h++)
+					{
+						tb.type=1;
+						strcpy(tb.hash,objhash[h]);
+						strcpy(tb.fname,flnames[h]);
+					
+						
+						fwrite(&tb,sizeof(struct treeblob),1,fp1);
+						
+						
+					}
+					
+				
+					
+				}
+				else
+				{
+					printf("Error:unable to create TREE object\n");
+				}
+				fclose(fp1);
+				//fclose(fp);
+				
+			
+			
+			
+			
+			
+			/***************************************************************************/	
+			
+			
+			/***********COMMIT DATA ***********************/
+			
+		sprintf(placeholder,"%ld",sum);
+		strcat(placeholder,"CODEBUCKETSIGNATURE"); // to privide random commits
+		SHA1Reset(&sha);
+	    SHA1Input(&sha, (const unsigned char *) placeholder, strlen(placeholder));
+		if (!SHA1Result(&sha))
+	    {
+	        fprintf(stderr, "ERROR-- could not compute message digest\n");
+	    }
+	    else
+	    {
+	        printf("\t");
+	        for(i = 0; i < 5 ; i++)
+	        {
+				sprintf(ulstring,"%X", sha.Message_Digest[i]);
+				                        strcat(sha1hash,ulstring);
+
+			}
+
+	    }
+	
+		strcpy(folder,substr(sha1hash,1,2));
+		strcpy(file,substr(sha1hash,3,38));
+		strcpy(compath,"./.cdb/objs/");
+		strcat(compath,folder);
+		if(!(opendir(compath)))     
+		{
+			sprintf(command,"mkdir ./.cdb/objs/%s",folder);
+			system(command);
+	
+		}
+		strcat(compath,"/");
+		strcat(compath,file);
+		if((fp1 = fopen(compath,"wb"))!=NULL)
+		{
+			struct commitdata cd;
+			FILE *fp3;
+			fp3 = fopen("./.cdb/HEAD","r");
+			fscanf(fp3,"%s",parhash);
+			fclose(fp3);
+			strcpy(cd.parent,parhash);
+			strcpy(cd.tree,treehash);
+			strcpy(cd.msg,argv[2]);
+			fwrite(&cd,sizeof(struct commitdata),sizeof(buffer),fp1);
+			fp3 = fopen("./.cdb/logs/log","a");
+			fprintf(fp3,"<%s>\n<CURRENT DATE>\n<%s>\n---------------",sha1hash,cd.msg);
+			fclose(fp3);
+			fp3 = fopen("./.cdb/HEAD","w");
+			fprintf(fp3,"%s",sha1hash);
+			fclose(fp3);
+			
+		}
+		else
+		{
+			printf("Error:unable to commit data blob\n");
+		}
+		fclose(fp1);
+	//	fclose(fp);
+		
+	
+			
+			
+			
+			
+			
+			
+	/****************************************************************************************/
+			
+			
+			
+	}
+			
+			
+			
+			
+	else if(!strcmp(argv[1],"diff"))
+	{
+		if(argc<4)
+		{
+			printf("\n incorrect usage-- please refer to manual\n");
+		}
+		else
+		{
+			diff(argv[2],argv[3]);
+		}
+		
+	}						
+	
+	
+	else
+	{
+		printf("\nError: incorrect usage\n");
+	}					
+		
 		
 			
 				return 0;	
@@ -495,6 +788,34 @@ int match(struct direct **files , char *name,int count)
 	
 	
 }
+
+char *substr(char *string, int position, int length) 
+{
+   char *pointer;
+   int c;
+ 
+   pointer = (char *)malloc(length+1);
+ 
+   if (pointer == NULL)
+   {
+      printf("Unable to allocate memory.\n");
+      exit(EXIT_FAILURE);
+   }
+ 
+   for (c = 0 ; c < position -1 ; c++) 
+      string++; 
+ 
+   for (c = 0 ; c < length ; c++)
+   {
+      *(pointer+c) = *string;      
+      string++;   
+   }
+ 
+   *(pointer+c) = '\0';
+ 
+   return pointer;
+}
+
 	
 	
 	

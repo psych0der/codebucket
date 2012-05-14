@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <iostream> // for cin function (fgets) not working #strange#
 #include <sys/stat.h>
 #include <sys/param.h>     // for MAXPATHLEN MACRO
 #include <unistd.h>
@@ -155,6 +154,10 @@ int initcodebuk(void)
 				printf("codebucket suucessfully initilized in :%s\n",wd);
 				chdir(wd);
 				getconfig();
+				FILE *fp4;
+				fp4 = fopen("./.cdb/HEAD","w");
+				fprintf(fp4,"0");
+				fclose(fp4);
 			
 				return 1;
 			}
