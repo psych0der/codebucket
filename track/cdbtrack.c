@@ -100,18 +100,24 @@ int readcontents(void)
 
 struct trackst * search(char *namerequest)
 {
-	struct trackst f;
+	struct trackst *f,g;
+	f = (struct trackst *)malloc(sizeof(struct trackst ));
 	
-	FILE *fp=NULL;
+	FILE *fp;
 	if((fp=fopen("./.cdb/cdb.track","rb"))!=NULL)
 	{
 		
-			while(fread(&f,sizeof(struct trackst),1,fp))
+	//	fread(f,sizeof(struct trackst),1,fp);
+	//	rewind(fp);
+			//while(fread(f,sizeof(struct trackst),1,fp))
+		while(!feof(fp))
 		{
-		
-			if(!strcmp(namerequest,f.name))
+	
+		fread(f,sizeof(struct trackst),1,fp);
+			if(!strcmp(namerequest,f->name))
 			{
-				return &f;
+				g=*f;
+				return f;
 			}
 		
 	 	}
@@ -235,7 +241,7 @@ int update(struct trackst *p)
 			
 				if(!strcmp(p->name,f.name))
 				{
-				
+					printf("\n new time : %ld\n",p->mtime);
 					if(p->checksum!=f.checksum)
 					{
 						fseek(fp,-sizeof(struct trackst),SEEK_CUR);

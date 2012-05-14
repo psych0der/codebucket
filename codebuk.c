@@ -175,6 +175,7 @@ else if(!strcmp(argv[1],"status"))
 							mtm = status.st_mtime;
 							if(tp->mtime!=mtm)
 							{
+								printf("new time : %ld  old time : %ld  name:%s\n",mtm,tp->mtime,tp->name);
 								printf("MODIFIED: %s\n",files[i-1]->d_name);
 								clean=0;
 							}
@@ -195,19 +196,20 @@ else if(!strcmp(argv[1],"status"))
 							
 							}
 							
+				
+							
+				}
 				if(clean==1)
 				{
 					printf("Working directory clean\n");
 				}
-							
-				}
 		
 		
 		
 		
-			//	printf("\n debug summary\n");	
+		printf("\n debug summary\n");	
 	
-//	printtl();	
+	printtl();	
 		
 }		
 		
@@ -216,6 +218,8 @@ else if(!strcmp(argv[1],"status"))
 		
 		else if( !strcmp(argv[1],"add"))
 		{
+			struct trackst *tp;
+			
 			if(argc ==2)
 			{
 				
@@ -245,16 +249,20 @@ else if(!strcmp(argv[1],"status"))
 										exit(1);
 								}*/
 							
+									//tp = (struct trackst *)malloc(sizeof(struct trackst));
 							if((tp=search(files[i-1]->d_name)))
 							{
-
+								
 								if(!(stat(files[i-1]->d_name,&status)))
 								{
-
+								
 									mtm = status.st_mtime;
-									if(tp->mtime!=mtm)
+								
+									//tp->mtime!=mtm
+									if(1)
 									{
-									    	fp=fopen(files[i-1]->d_name,"r");
+									    	
+											fp=fopen(files[i-1]->d_name,"r");
 											mtm = status.st_mtime;
 											ctm = status.st_ctime;
 											len = fread(buffer,sizeof(char),sizeof(buffer),fp);
@@ -301,7 +309,7 @@ else if(!strcmp(argv[1],"status"))
 											fp=fopen(files[i-1]->d_name,"r");
 											len = fread(buffer,sizeof(char),sizeof(buffer),fp);
 											chk = checksum(buffer,len,0);
-											fclose();
+											fclose(fp);
 
 										strcpy(ts.name,files[i-1]->d_name);
 										ts.ctime = ctm;
