@@ -1,13 +1,13 @@
 Code Bucket is a simple initiative to learn about what goes behind
 version control system
 
-# fgets() issue still pending .... #
+# fgets() issue still pending  #
 
 c/c++ programs will be wrapped in shell scripts to provide robustness
 
 download and extract the folder to your home directory
 in the terminal type : cd $HOME/codebucket
-		       ./configure
+		                  ./configure
 type in your administrator password when asked
 
 //psych0der

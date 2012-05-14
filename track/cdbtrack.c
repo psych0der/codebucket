@@ -194,7 +194,7 @@ void printtl()
 		if(ftell(fp)==0)
 		{
 		
-			printf("\n empty file\n");
+			printf("\n tracking list empty\n");
 			fclose(fp);
 			exit(1);
 		}
@@ -220,5 +220,45 @@ void printtl()
 		printf("Error:unable to print tracking list\n");
 		exit(1);
 	}
+	
+}
+
+int update(struct trackst *p)
+{
+	
+	FILE *fp;
+	struct trackst f;
+	if(fp =fopen("./.cdb/cdb.track","r+b"))
+	{
+		while(fread(&f,sizeof(struct trackst),1,fp))
+			{
+			
+				if(!strcmp(p->name,f.name))
+				{
+				
+					if(p->checksum!=f.checksum)
+					{
+						fseek(fp,-sizeof(struct trackst),SEEK_CUR);
+						fwrite(p,sizeof(struct trackst),1,fp);
+					}
+					fclose(fp);
+					return 1;
+					break;
+					
+				}
+	
+		
+ 			}
+		
+		
+		
+	}
+	else
+	{
+		return 0;
+	}
+	
+	
+	
 	
 }

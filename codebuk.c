@@ -24,7 +24,14 @@ int main(int argc , char *argv[])
 	int flag;
 	unsigned int chks; // stores the checksum
 	char buffer[8192] , placeholder[40]; // buffer for storing contents of file
-	
+	long int mtm;
+	long int ctm;
+	unsigned long chk;
+	struct stat status;
+	int count,i;
+	struct direct **files;
+	int file_select(struct direct *);  // file filter
+	struct trackst *tp;
 	
 		
 	if(argc ==1)
@@ -142,13 +149,7 @@ else if(!strcmp(argv[1],"status"))
 	}
 	else
 	{
-		long int mtm;
-		long int ctm;
-		unsigned long chk;
-		struct stat status;
-		int count,i;
-		struct direct **files;
-		int file_select(struct direct *);  // file filter
+		int clean =1;
 		
 		
 		if (getwd(pathname) == NULL )
@@ -175,26 +176,40 @@ else if(!strcmp(argv[1],"status"))
 							if(tp->mtime!=mtm)
 							{
 								printf("MODIFIED: %s\n",files[i-1]->d_name);
+								clean=0;
 							}
 						}
 						
 						
 					}
 					else
-						printf("NEW: %s\n",files[i-1]->d_name);
+						{
+						if(!(opendir(files[i-1]->d_name)))     // filtering directories
+						{	
+						
+							printf("NEW: %s\n",files[i-1]->d_name);
+							clean=0;
+						
+						}							
 							
+							
+							}
+							
+				if(clean==1)
+				{
+					printf("Working directory clean\n");
+				}
 							
 				}
 		
 		
 		
 		
-	}
+			//	printf("\n debug summary\n");	
 	
-
 //	printtl();	
 		
-		
+}		
 		
 		
 }
@@ -207,6 +222,136 @@ else if(!strcmp(argv[1],"status"))
 				printf("\n ERROR : no filenmae supplied \n");
 				exit(1);
 			}
+		
+		
+			if(!strcmp(argv[2],"."))
+			{
+				struct trackst holder;    // temp holder
+				if (getwd(pathname) == NULL )
+						{ printf("Error getting pathn");
+								exit(0);
+						}
+				count = scandir(pathname, &files, file_select, alphasort);
+					   if(count <= 0)
+						{		 printf("\nWorking Directory empty\n");
+								 
+								exit(0);
+						}
+						for (i=1;i<count+1;++i)
+						{ 
+							/*	if((fp=fopen(files[i-1]->d_name,"r"))==NULL)
+								{
+										printf("\n %s : no such file or directory found\n",argv[2]);
+										exit(1);
+								}*/
+							
+							if((tp=search(files[i-1]->d_name)))
+							{
+
+								if(!(stat(files[i-1]->d_name,&status)))
+								{
+
+									mtm = status.st_mtime;
+									if(tp->mtime!=mtm)
+									{
+									    	fp=fopen(files[i-1]->d_name,"r");
+											mtm = status.st_mtime;
+											ctm = status.st_ctime;
+											len = fread(buffer,sizeof(char),sizeof(buffer),fp);
+											fclose(fp);
+											chk = checksum(buffer,len,0);
+											strcpy(holder.name,files[i-1]->d_name);
+											holder.ctime = ctm;
+											holder.mtime = mtm;
+											holder.checksum = chk;
+											if(!update(&holder))
+											{
+												printf("\n Error: unable to update track list\n");
+												exit(1);
+											}
+											else
+											{
+													printf("updated : %s\n",files[i-1]->d_name);
+											}
+				
+									}
+									
+								}
+								
+								else
+									{
+										printf("\nError: unable to read kernel tables  #1\n");
+									}	
+							}		
+								
+							else
+							{
+								
+									struct trackst ts;
+									
+									if(!(opendir(files[i-1]->d_name)))
+									{
+										
+										if(!(stat(files[i-1]->d_name,&status)))
+										{
+											mtm = status.st_mtime;
+											ctm = status.st_ctime;
+
+
+											fp=fopen(files[i-1]->d_name,"r");
+											len = fread(buffer,sizeof(char),sizeof(buffer),fp);
+											chk = checksum(buffer,len,0);
+											fclose();
+
+										strcpy(ts.name,files[i-1]->d_name);
+										ts.ctime = ctm;
+										ts.mtime = mtm;
+										ts.checksum = chk;
+										//printf("\n checkpoint #302\n");
+										if(addfile(&ts)==-1)
+										{
+										//	printf("\n error?\n");
+											//printf("Error: updating tracking list #2\n");
+										}
+										else
+										{
+											printf("Added : %s\n",files[i-1]->d_name);
+											//printtl();
+										}
+
+										}
+										
+										else
+											{
+												printf("\nError: unable to read kernel tables #2\n");
+											}
+									
+									}
+									
+									
+									
+									
+									
+									
+							}
+							
+							fclose(fp);
+						
+						}
+								
+				
+								
+								
+			}
+							
+						
+		
+			
+							
+						
+						
+			
+			
 			else
 			{
 			
@@ -261,9 +406,9 @@ else if(!strcmp(argv[1],"status"))
 			
 			}
 			
-		} 
+		 
 		
-		
+	    }	
 		
 			
 				return 0;	
