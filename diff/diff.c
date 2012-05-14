@@ -401,8 +401,8 @@ printf("\n Filesize1 : %d    Filesize2 : %d  \n",sz1,sz2);
 	ecount=gete(head2,ehead);
 	//printel(ehead,ecount);
 
-file1 = malloc(sz1*sizeof(struct hash_vec));
-file2 = malloc(sz2*sizeof(struct hash_vec));
+file1 =(struct hash_vec *) malloc(sz1*sizeof(struct hash_vec));
+file2 = (struct hash_vec *) malloc(sz2*sizeof(struct hash_vec));
 getarray(head1,file1);
 getarray(head2,file2);
 //	printll(head1);
