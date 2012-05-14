@@ -140,12 +140,23 @@ else if(!strcmp(argv[1],"status"))
 	}
 	if(argc==3)
 	{
-		if((tp=search(argv[2])))
+		if(!strcmp(argv[2],"show"))
 		{
-			printf("\n found checksum : %lu\n",tp->checksum);
+			
+			printtl();
+			
 		}
+		
+		
 		else
+		{
+			if((tp=search(argv[2])))
+			{
+				printf("\n found checksum : %lu\n",tp->checksum);
+			}
+			else
 			printf("No entry by name %s\n",argv[2]);
+		}
 	}
 	else
 	{
@@ -175,7 +186,7 @@ else if(!strcmp(argv[1],"status"))
 							mtm = status.st_mtime;
 							if(tp->mtime!=mtm)
 							{
-								printf("new time : %ld  old time : %ld  name:%s\n",mtm,tp->mtime,tp->name);
+								//printf("new time : %ld  old time : %ld  name:%s\n",mtm,tp->mtime,tp->name);
 								printf("MODIFIED: %s\n",files[i-1]->d_name);
 								clean=0;
 							}
@@ -207,9 +218,9 @@ else if(!strcmp(argv[1],"status"))
 		
 		
 		
-		printf("\n debug summary\n");	
+	//	printf("\n debug summary\n");	
 	
-	printtl();	
+	//printtl();	
 		
 }		
 		
