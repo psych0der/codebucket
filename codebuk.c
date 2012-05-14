@@ -5,10 +5,17 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/param.h>
+#include <dirent.h>
 #include "./checks/checksum.h"
 #include "./sha1/sha1.h"
 #include "./dir/cdbdir.h"
 #include "./track/cdbtrack.h"
+
+#define FALSE 0
+#define TRUE !FALSE
+
+extern  int alphasort();  // for sorting filnames in ascending order
+char pathname[MAXPATHLEN];
 
 int main(int argc , char *argv[])
 {
@@ -112,6 +119,7 @@ else if(!strcmp(argv[1],"status"))
 {
 			int flag;
 			flag = filecheck();
+			struct trackst *tp;
 			
 	if(!flag)
 	{	
@@ -123,10 +131,68 @@ else if(!strcmp(argv[1],"status"))
 		}
 		
 	}
+	if(argc==3)
+	{
+		if((tp=search(argv[2])))
+		{
+			printf("\n found checksum : %lu\n",tp->checksum);
+		}
+		else
+			printf("No entry by name %s\n",argv[2]);
+	}
+	else
+	{
+		long int mtm;
+		long int ctm;
+		unsigned long chk;
+		struct stat status;
+		int count,i;
+		struct direct **files;
+		int file_select(struct direct *);  // file filter
+		
+		
+		if (getwd(pathname) == NULL )
+				{ printf("Error getting pathn");
+						exit(0);
+				}
+		printf("Codebucket status for Directory: %s\n\n",pathname);
+		count = scandir(pathname, &files, file_select, alphasort);
+			   if(count <= 0)
+				{		 printf("\nDirectory Empty\n");
+						 printf("\n updating Directory list\n");
+						exit(0);
+				}
+				for (i=1;i<count+1;++i)
+				{ 
+				
+					if((tp=search(files[i-1]->d_name)))
+					{
+						
+						if(!(stat(files[i-1]->d_name,&status)))
+						{
+							
+							mtm = status.st_mtime;
+							if(tp->mtime!=mtm)
+							{
+								printf("MODIFIED: %s\n",files[i-1]->d_name);
+							}
+						}
+						
+						
+					}
+					else
+						printf("NEW: %s\n",files[i-1]->d_name);
+							
+							
+				}
+		
+		
+		
+		
+	}
 	
-//	writetrack();
-//	printf("contents : %d\n",readcontents());
-	printtl();	
+
+//	printtl();	
 		
 		
 		
@@ -202,6 +268,16 @@ else if(!strcmp(argv[1],"status"))
 			
 				return 0;	
 		
+	}
+	
+int file_select(struct direct *entry)
+
+	{
+		if ((strcmp(entry->d_name, ".") == 0) ||(strcmp(entry->d_name, "..") == 0)|| (entry->d_name[0]=='.'))
+					return (FALSE);
+					
+					else
+						return (TRUE);
 	}
 	
 	

@@ -14,3 +14,4 @@ int writetrack(void);
 int readcontents(void);
 int addfile(struct trackst *);
 void printtl(void);
+struct trackst * search(char*);

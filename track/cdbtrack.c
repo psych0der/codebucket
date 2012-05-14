@@ -75,9 +75,9 @@ int readcontents(void)
 		}
 		else
 		{
-			while(!feof(fp))
+			while(fread(&t,sizeof(t),1,fp))
 			{
-				fread(&t,sizeof(t),1,fp);
+				
 				n++;
 				
 			}
@@ -95,6 +95,43 @@ int readcontents(void)
 	
 	
 }
+
+
+
+struct trackst * search(char *namerequest)
+{
+	struct trackst f;
+	
+	FILE *fp=NULL;
+	if((fp=fopen("./.cdb/cdb.track","rb"))!=NULL)
+	{
+		
+			while(fread(&f,sizeof(struct trackst),1,fp))
+		{
+		
+			if(!strcmp(namerequest,f.name))
+			{
+				return &f;
+			}
+		
+	 	}
+		fclose(fp);
+		return NULL;
+		
+	}
+	else
+	{
+		printf("Error:unable access tracking list\n");
+	}
+	
+	
+	
+	
+}
+
+
+
+
 
 int addfile(struct trackst *p)
 {
