@@ -16,3 +16,5 @@ int addfile(struct trackst *);
 void printtl(void);
 struct trackst * search(char*);
 int update(struct trackst *);
+int untrack(char*);
+int getnames(char arr[][20]);

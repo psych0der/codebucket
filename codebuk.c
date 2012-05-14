@@ -15,6 +15,7 @@
 #define TRUE !FALSE
 
 extern  int alphasort();  // for sorting filnames in ascending order
+int match(struct direct ** , char *,int);
 char pathname[MAXPATHLEN];
 
 int main(int argc , char *argv[])
@@ -117,8 +118,6 @@ int main(int argc , char *argv[])
 						        printf("\n");
 						        printf("\t%s\n",sha1hash);
 						
-		
-							
 		}
 		
 		
@@ -127,6 +126,40 @@ else if(!strcmp(argv[1],"status"))
 			int flag;
 			flag = filecheck();
 			struct trackst *tp;
+			int num,i=0;
+		
+			
+	/*************************** CLEANING *******************************/
+	
+	
+	
+			if (getwd(pathname) == NULL )
+					{ printf("Error getting path\n");
+							exit(0);
+					}
+			
+			count = scandir(pathname, &files, file_select, alphasort);
+			num = readcontents();
+			char flnames[num][20];
+			getnames(flnames);
+			
+			
+			for(i=0;i<num;i++)
+			{
+				//printf("filename : %s\n",flnames[i]);
+				if(!(match(files,flnames[i],count)))
+				{
+					untrack(flnames[i]);
+				}
+			}
+	
+	
+	
+	/*********************************************************************/		
+			
+			
+	
+	
 			
 	if(!flag)
 	{	
@@ -444,7 +477,24 @@ int file_select(struct direct *entry)
 						return (TRUE);
 	}
 	
+int match(struct direct **files , char *name,int count)	
+{
+	int i=0;
+	for(i;i<count;i++)
+	{
+	//	printf("\n fl:%s   name:%s\n",files[i]->d_name,name);
+		
+		if(!strcmp(name,files[i]->d_name))
+		{
+			//printf("\n matched %s\n",name);
+			return 1;
+		}
+	}
+	return 0;
 	
+	
+	
+}
 	
 	
 	

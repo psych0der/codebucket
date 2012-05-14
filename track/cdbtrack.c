@@ -53,7 +53,7 @@ int writetrack(void)
 	}
 	else
 	{
-		printf("lol\n");
+	//	printf("lol\n");
 	}
 	
 	
@@ -264,7 +264,63 @@ int update(struct trackst *p)
 		return 0;
 	}
 	
+}
+
+int untrack(char *name)
+{
+//	printf("\n lol\n");
+	FILE *fp1,*fp2;
+	struct trackst f;
+	fp1 = fopen("./.cdb/cdb.track","rb");
+	fp2 = fopen("./.cdb/temp.track","wb");
+	
+	while(fread(&f,sizeof(struct trackst),1,fp1))
+		{
+		
+			if(strcmp(name,f.name))					// for non matching names
+			{
+	          
+				fwrite(&f,sizeof(struct trackst),1,fp2);
+	
+			}
+			
+		}
+		fclose(fp1);
+		fclose(fp2);
+		remove("./.cdb/cdb.track");
+		rename("./.cdb/temp.track","./.cdb/cdb.track");
+		
+		return 1;
 	
 	
+	
+	
+}
+
+int getnames(char arr[][20])
+{
+	
+	FILE *fp;
+	struct trackst t;
+	int n=0;
+	if((fp=fopen("./.cdb/cdb.track","rb"))!=NULL)
+	{
+		
+		while(fread(&t,sizeof(t),1,fp))
+		{
+				
+			strcpy(arr[n++],t.name);
+		//	printf("tname : %s   arrname: %s\n",t.name,arr[n-1]);
+				
+		}
+			
+
+	}
+	else
+	{
+		printf("\n Error: unable to open track file\n");
+	}
+	
+	return 1;
 	
 }
