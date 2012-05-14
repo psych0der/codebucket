@@ -115,6 +115,7 @@ else if(!strcmp(argv[1],"status"))
 			
 	if(!flag)
 	{	
+		
 		if(createtrack()==1)
 		{
 			printf("\n TRACKING INITIATED\n");
@@ -175,7 +176,7 @@ else if(!strcmp(argv[1],"status"))
 					ts.checksum = chk;
 					if(addfile(&ts)==-1)
 					{
-						printf("Error: updating tracking list #2\n");
+						//printf("Error: updating tracking list #2\n");
 					}
 					else
 					{

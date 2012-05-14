@@ -7,7 +7,7 @@
 int filecheck(void)
 {
 	FILE *fp;
-	fp=fopen("./.cdb/cdb.track","r");
+	fp=fopen("./.cdb/cdb.track","rb");
 	if(fp==NULL)
 	{
 		printf("\n TRACKING not initiated\n");
@@ -98,7 +98,7 @@ int readcontents(void)
 
 int addfile(struct trackst *p)
 {
-	printf("name to be updated : %s\n",p->name);
+	printf("FILE to be tracked : %s\n",p->name);
 	FILE *fp;
 	struct trackst f;
 	int avail=0;
@@ -111,7 +111,7 @@ int addfile(struct trackst *p)
 		
 			if(!strcmp(p->name,f.name))
 			{
-				printf("\n???\n");
+			//	printf("\n???\n");
 				avail =1;
 			}
 		}
@@ -149,15 +149,34 @@ void printtl()
 	
 	FILE *fp;
 	struct trackst f;
-	fp =fopen("./.cdb/cdb.track","rb");
+
+	fp =fopen("./.cdb/cdb.track","a+b");
 	if(fp!=NULL)
 	{
-		while(!feof(fp))
+		//	printf("\nkyon?\n");
+		if(ftell(fp)==0)
 		{
-			fread(&f,sizeof(struct trackst),1,fp);
+		
+			printf("\n empty file\n");
+			fclose(fp);
+			exit(1);
+		}
+		
+	else
+	{
+		fclose(fp);
+			fp =fopen("./.cdb/cdb.track","rb");
+			rewind(fp);
+			//while(!feof(fp))
+			while(fread(&f,sizeof(struct trackst),1,fp))
+		{
+		
+		//	fread(&f,sizeof(struct trackst),1,fp);
 			printf("------\n");
 			printf("name : %s  \nctime : %ld\nmtime : %ld\n checksum : %lu\n",f.name,f.ctime,f.mtime,f.checksum);
 	 	}
+		fclose(fp);
+	}
 	}
 	else
 	{
