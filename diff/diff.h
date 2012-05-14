@@ -16,13 +16,13 @@ struct equiclass
 	
 };
 
-struct k
+struct candidate
 {
 	int a;
 	int b;
-	struct k *ref;
+	struct candidate *ref;
 	
-}
+};
 
 void diff(char *,char*); // gets hash of individual lines of a file specifies by char *
 void insert(int,unsigned long,struct hash_vec **,struct hash_vec **);
@@ -38,3 +38,4 @@ void printel(struct equiclass *,int);
 
 
 void fillp(int * , struct equiclass * , struct hash_vec*,struct hash_vec*,int,int);
+int merge(struct candidate *,int *,int,struct equiclass *,int);

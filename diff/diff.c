@@ -247,12 +247,79 @@ void fillp(int *p , struct equiclass *ehead , struct hash_vec *file1,struct hash
 	
 	
 
-	for(i=1;i<=size;i++)
+/*	for(i=1;i<=size;i++)
 	{
 		printf(" %d\n",p[i]);
 	}
+*/
+}
+
+
+
+int merge(struct candidate *K,int *k,int i,struct equiclass *E,int p)
+{
+	int r=0,flagwhile=0,flagfor=0;
+ 	struct candidate c,dummy;
+ 	c=K[0]; 
+ 
+ 
+ 	int s,b;
+	
+while(1)
+ {
+		int j=E[p].lno;
+ for(s=r;s<=*k;s++)
+ {
+      
+
+	if ( K[s].b < j && K[s+1].b>j )
+        {
+	
+			if(K[s+1].b>j)
+			{
+			K[r]=c;	
+			r=s+1;
+			dummy.a = i;
+			dummy.b = j;
+			dummy.ref = &K[s];
+			c = dummy;
+				
+		}
+		
+		if(s==*k)
+		{
+			K[(*k)+2] = K[(*k)+1];   // moving the fence
+			(*k)++;
+			flagwhile=1;
+			break;
+		}
+		
+	
+	}
 
 }
+
+if(flagwhile)
+{
+	break;
+} 
+
+if(E[p].last==1)
+{
+	flagwhile=1;
+	break;
+} 
+else
+{
+	p = p+1;
+}
+}      
+K[r]=c;		
+return 1;
+}
+
+
+
 
 
 
@@ -326,13 +393,13 @@ void diff(char *name1,char *name2)
 
 sz1=adjustll(head1);
 sz2=adjustll(head2);
-printf("\n size1 : %d    size2 : %d  \n",sz1,sz2);
+printf("\n Filesize1 : %d    Filesize2 : %d  \n",sz1,sz2);
 	
 	sort(head2);
-	printll(head2);
+	//printll(head2);
 	ehead = malloc(sz2*sizeof(struct equiclass));
 	ecount=gete(head2,ehead);
-	printel(ehead,ecount);
+	//printel(ehead,ecount);
 
 file1 = malloc(sz1*sizeof(struct hash_vec));
 file2 = malloc(sz2*sizeof(struct hash_vec));
@@ -346,6 +413,127 @@ getarray(head2,file2);
 
 int p[sz1];
 fillp(p,ehead,file1,file2,sz2,sz1);	// because array starts from 1
+
+
+int min = (sz1<sz2)?sz1:sz2;
+struct candidate K[min+1];
+
+K[0].a = 0;                 // setting initial condition
+K[0].b = 0;
+K[0].ref=NULL;
+
+K[1].a = sz1;				// seting boundry condition
+K[1].b = sz2;
+K[1].ref=NULL;
+
+int k =0;
+int index=1;
+for(index;index<=sz1;index++)
+{
+	if(p[index]!=0)
+	{
+		merge(K,&k,index,ehead,p[index]);
+	}
+	
+}
+
+int F1[sz1],F2[sz2],h;
+for(h=0;h<sz1;h++)
+{
+	F1[h] = -1;
+}
+for(h=0;h<sz2;h++)
+{
+	F2[h]=-1;
+}
+
+struct candidate *s;
+s = &K[k];
+
+while(s!=NULL)
+{
+	F1[s->a]=s->b;
+	s = s->ref;	
+	
+}
+//printf("\n here?\n");
+s = &K[k];
+while(s!=NULL)
+{
+	F2[s->b]=s->a;
+	s = s->ref;	
+	
+}
+
+
+int lcounter1=0,lcounter2=0,total1,total2; // to iterate through lines for final output
+/*printf("\n for file 1\n");
+for(h=0;h<sz1;h++)
+{
+	printf(" a : %d  b : %d\n",h,F1[h]);
+}*/
+
+/*printf("\n for file 2\n");
+for(h=0;h<sz1;h++)
+{
+	printf(" b : %d  a : %d\n",h,F2[h]);
+}*/
+
+/* FINAL output   */
+if((fp=fopen(name1,"r"))!=NULL)
+{
+	
+	lcounter1=0;
+	total1=0;
+		while(lcounter1<sz1)
+		{	
+			
+			if(F1[lcounter1]==-1)
+			{
+				fgets(buff,1024,fp);	
+				printf("--- %s\n",buff);
+				total1++;	
+			}
+			lcounter1++;
+		
+			
+		}
+	
+		fclose(fp);	
+	
+	
+}
+
+if((fp=fopen(name2,"r"))!=NULL)
+{
+	
+	lcounter2=0;
+	total2=0;
+		while(lcounter2<sz2)
+		{
+			if(F2[lcounter2]==-1)
+			{
+				fgets(buff,1024,fp);	
+				printf("+++ %s\n",buff);
+				total2++;	
+			}
+			lcounter2++;
+		
+			
+		}
+	
+		fclose(fp);	
+	
+	
+}
+if(total1==0 && total2==0)
+{
+	printf("\nNo change found\n");
+}
+
+
+
+
 
 }
 
