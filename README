@@ -5,9 +5,14 @@ version control system
 
 c/c++ programs will be wrapped in shell scripts to provide robustness
 
+**includes help command**
+
 download and extract the folder to your home directory
 in the terminal type : cd $HOME/codebucket
 		               ./configure
 type in your administrator password when asked
+
+*file tracker and file diff are working correctly*
+development status : inactive
 
 //psych0der
